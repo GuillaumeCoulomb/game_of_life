@@ -44,15 +44,17 @@ class Board:
         for elt in self.cells:
             if elt.current_state==ALIVE:
                 if elt.number_of_neighboors(self)==0 or elt.number_of_neighboors(self)==1 :
-                    self.next_state=DEAD
+                    elt.next_state=DEAD
                 if elt.number_of_neighboors(self)==2 or elt.number_of_neighboors(self)==3 :
-                    self.next_state=ALIVE
+                    elt.next_state=ALIVE
                 if elt.number_of_neighboors(self)>3:
-                    self.next_state=DEAD
+                    elt.next_state=DEAD
+                
 
             if elt.current_state==DEAD:
                 if elt.number_of_neighboors(self)==3:
-                    self.next_state=ALIVE
+                    elt.next_state=ALIVE
+            
 
         for elt in self.cells:
             elt.current_state=elt.next_state
@@ -90,7 +92,7 @@ class Cell(Board):
         self.x_pos=x_pos
         self.y_pos=y_pos
         self.current_state=state #living or dead
-        self.next_state=None #None because initialisation
+        self.next_state=state
 
     def number_of_neighboors(self,board):
         n=0
@@ -104,6 +106,7 @@ def game_of_life():
     board=Board(args.i)
     for k in range(int(args.m)):
         board.step_forward()
+        board.output_file()
     board.output_file()
         
 
