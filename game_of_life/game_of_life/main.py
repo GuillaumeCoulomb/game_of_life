@@ -1,6 +1,7 @@
 import argparse
 
 #poetry run game_of_life -i="my_input_file.txt" -o="my_output_file.text" -m=5 -f=0 --width=800 --height=600
+#il faut l'executer dans le dossier game_of_life contenant main.py
 
 
 #command line arguments 
@@ -21,6 +22,7 @@ DEAD=False
 
 
 
+
 class Board:
     def __init__(self,initial_pattern):
         self.cells=[]
@@ -29,10 +31,11 @@ class Board:
             lignes = fichier.readlines()
             for i in range(len(lignes)):
                 for j in range(len(lignes[i].strip())):
-                    if lignes[i].strip()=='0':
-                        self.cells.append(Cell(i,j,False))
-                    else :
-                        self.cells.append(Cell(i,j,True))
+                    if lignes[i].strip()[j]=='0':
+                        self.cells.append(Cell(i,j,DEAD))
+                    if lignes[i].strip()[j]=='1':
+                        self.cells.append(Cell(i,j,ALIVE))
+        
     
     def step_forward(self):
 
@@ -60,26 +63,27 @@ class Board:
 
     def output_file(self):
 
-        with open(args.o, 'w') as fichier:
-                pass  # Ne rien écrire, ce qui vide le fichier
+        
 
-        n_raws=max([c.x_pos for c in self.cells])
-        n_columns=max([c.x_pos for c in self.cells])
+        n_raws=max([c.x_pos for c in self.cells])+1
+        n_columns=max([c.y_pos for c in self.cells])+1
 
-
+        
         # Ouverture du fichier en mode écriture ('w')
-
-        for i in range(n_raws):
-            for j in range(n_columns):
-                for elt in self.cells:
-                    if elt.x_pos==i and elt.y_pos==j:
-                        if elt.current_state==ALIVE:
-                            with open(args.o, 'w') as fichier:
+        with open(args.o, 'w') as fichier:
+            for i in range(n_raws):
+                for j in range(n_columns):
+                    for elt in self.cells:
+                        if elt.x_pos==i and elt.y_pos==j:
+                            if elt.current_state==ALIVE: 
                                 fichier.write("1")
-                        else :
-                            with open(args.o, 'w') as fichier:
+                            if elt.current_state==DEAD :      
                                 fichier.write("0")
-            fichier.write("\n")
+
+                    
+        
+                
+                fichier.write("\n")
 
 class Cell(Board):
     def __init__(self,x_pos,y_pos,state):
@@ -101,7 +105,7 @@ def game_of_life():
     for k in range(int(args.m)):
         board.step_forward()
     board.output_file()
-    
+        
 
 
 
