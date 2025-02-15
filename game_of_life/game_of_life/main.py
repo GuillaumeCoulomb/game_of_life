@@ -10,13 +10,13 @@ import sys
 
 #command line arguments :
 
-#-d=1 si display wanted / -d=0 if not wanted
+#-d=1 si display wanted
 
 parser = argparse.ArgumentParser(description='Some description.')
 parser.add_argument('-i', help="to set the path to the initial pattern file")
 parser.add_argument('-o', help="to set the path to the output file, that will contain the final state of our simulation, in the same format as the input file")
 parser.add_argument('-m', help="to set the number of steps to run, when display is off")
-parser.add_argument('-d', help="display flag. By default no display is done with pygame (i.e.: we don’t even initialize pygame). When enabled, pygame is enabled and we display each step of the simulation")
+parser.add_argument('-d', default=0,help="display flag. By default no display is done with pygame (i.e.: we don’t even initialize pygame). When enabled, pygame is enabled and we display each step of the simulation")
 parser.add_argument('-f', help="The number of frames per second to use with pygame")
 parser.add_argument('--width', help="the initial width of the pygame screen")
 parser.add_argument('--height', help="the initial heigth of the pygame screen")
@@ -28,76 +28,76 @@ DEAD=False
 
 class Board:
     def __init__(self,initial_pattern):
-        self.cells={} #the cells will be instantied in this dict
+        self._cells={} #the cells will be instantied in this dict
         with open(initial_pattern, 'r') as fichier: # opening file in reading mode
             lignes = fichier.readlines()
             for i in range(len(lignes)):
                 for j in range(len(lignes[i].strip())):
                     if lignes[i].strip()[j]=='0':
-                        self.cells[(i,j)]=Cell(i,j,DEAD) #the cells are instantied in self.cells, their keys are their positions
+                        self._cells[(i,j)]=Cell(i,j,DEAD) #the cells are instantied in self._cells, their keys are their positions
                     if lignes[i].strip()[j]=='1':
-                        self.cells[(i,j)]=Cell(i,j,ALIVE)
+                        self._cells[(i,j)]=Cell(i,j,ALIVE)
         
 
     def step_forward(self): #moves the board to the next step
 
-        for elt in self.cells.values(): #implement the game of life principle
+        for elt in self._cells.values(): #implement the game of life principle
             n_b=elt.number_of_neighboors(self)
-            if elt.current_state==ALIVE:
+            if elt._current_state==ALIVE:
                 if n_b==0 or n_b==1 :
-                    elt.next_state=DEAD
+                    elt._next_state=DEAD
                 if n_b==2 or n_b==3 :
-                    elt.next_state=ALIVE
+                    elt._next_state=ALIVE
                 if n_b>3:
-                    elt.next_state=DEAD
+                    elt._next_state=DEAD
             
-            if elt.current_state==DEAD:
+            if elt._current_state==DEAD:
                 if n_b==3:
-                    elt.next_state=ALIVE
+                    elt._next_state=ALIVE
             
-        for elt in self.cells.values():
-            elt.current_state=elt.next_state
+        for elt in self._cells.values():
+            elt._current_state=elt._next_state
 
 
     def output_file(self):
 
         #calulate the size of the output file
-        n_raws=max([c.x_pos for c in self.cells.values()])+1
-        n_columns=max([c.y_pos for c in self.cells.values()])+1
+        n_raws=max([c._x_pos for c in self._cells.values()])+1
+        n_columns=max([c._y_pos for c in self._cells.values()])+1
 
         # opening file in writing mode
         with open(args.o, 'w') as fichier:
             for i in range(n_raws):
                 for j in range(n_columns):
-                    if self.cells[(i,j)].current_state==ALIVE: 
+                    if self._cells[(i,j)]._current_state==ALIVE: 
                         fichier.write("1")
-                    if self.cells[(i,j)].current_state==DEAD:     
+                    if self._cells[(i,j)]._current_state==DEAD:     
                         fichier.write("0")
 
                 fichier.write("\n") #line break at the end of each line
 
 class Cell(Board):
     def __init__(self,x_pos,y_pos,state):
-        self.x_pos=x_pos
-        self.y_pos=y_pos
-        self.current_state=state #ALIVE or DEAD
-        self.next_state=state #used to calculate a new step
+        self._x_pos=x_pos
+        self._y_pos=y_pos
+        self._current_state=state #ALIVE or DEAD
+        self._next_state=state #used to calculate a new step
 
     def number_of_neighboors(self,board):
         n=0
         circle=[(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1)]
         for elt in circle: #travels the 8 positions surrounding a cell
-            tested_position=self.x_pos + elt[0],self.y_pos + elt[1]
-            if (tested_position) in board.cells.keys() and board.cells[tested_position].current_state==ALIVE :
+            tested_position=self._x_pos + elt[0],self._y_pos + elt[1]
+            if (tested_position) in board._cells.keys() and board._cells[tested_position]._current_state==ALIVE :
                 n=n+1 
         return n
 
     def draw(self, screen):
-        if self.current_state==ALIVE:
+        if self._current_state==ALIVE:
             color=(0,0,0)
-        if self.current_state==DEAD:
+        if self._current_state==DEAD:
             color=(255,255,255)
-        rect = pygame.Rect(self.y_pos * 10, self.x_pos * 10, 10, 10)
+        rect = pygame.Rect(self._y_pos * 10, self._x_pos * 10, 10, 10)
         pygame.draw.rect(screen, color, rect)
 
 
@@ -106,26 +106,24 @@ class Display:
     def __init__(self,width,height):
         pygame.init()
 
-        self.width=width
-        self.height=height
-        self.cell_size=10
-        self.clock= pygame.time.Clock()
-        screen_size = (int(self.width),int(self.height))
+        self._width=width
+        self._height=height
+        self._cell_size=10
+        self._clock= pygame.time.Clock()
+        screen_size = (int(self._width),int(self._height))
 
-        self.screen = pygame.display.set_mode(screen_size)
-        self.screen.fill((0, 0, 0))
+        self._screen = pygame.display.set_mode(screen_size)
+        self._screen.fill((128,128,128))
 
     def draw_update(self,board):
         
-        for cell in board.cells.values():
-            cell.draw(self.screen) 
+        for cell in board._cells.values():
+            cell.draw(self._screen) 
 
         pygame.display.update()
-        self.clock.tick(int(args.f))
+        self._clock.tick(int(args.f))
         
-
-
-    
+ 
 def game_of_life():
     
     board=Board(args.i)
@@ -139,7 +137,8 @@ def game_of_life():
 
         if int(args.d)==1: #if display on
             display.draw_update(board) # draws new step and refresh screen
-             #controls the fps
+            pygame.display.set_caption("Game of Life - step "+str(k))
+            
 
     if int(args.d)==1: #if display on, stops pygame
         pygame.quit()
