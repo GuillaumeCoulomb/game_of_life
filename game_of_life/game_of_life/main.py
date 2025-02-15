@@ -8,7 +8,7 @@ from .cells import Cell
 
 #python -m pip install pygame
 #poetry add pygame
-#poetry run game_of_life -i="my_input_file.txt" -o="my_output_file.text" -m=5 -f=0 --width=800 --height=600
+#poetry run game_of_life -i="my_input_file.txt" -o="my_output_file.txt" -m=5 -f=0 --width=800 --height=600
 #il faut l'executer dans le dossier game_of_life contenant main.py
 
 

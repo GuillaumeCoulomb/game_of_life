@@ -80,7 +80,8 @@ class Cell(Board):
             color=(0,0,0)
         if self._current_state==DEAD:
             color=(255,255,255)
-        rect = pygame.Rect(self._y_pos * 10, self._x_pos * 10, 10, 10)
+        c=10
+        rect = pygame.Rect(self._y_pos * c, self._x_pos * c,c,c)
         pygame.draw.rect(screen, color, rect)
 
 
