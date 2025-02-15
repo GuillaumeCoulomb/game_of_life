@@ -4,7 +4,7 @@ import argparse
 #il faut l'executer dans le dossier game_of_life contenant main.py
 
 
-#command line arguments 
+#command line arguments :
 
 parser = argparse.ArgumentParser(description='Some description.')
 parser.add_argument('-i', help="to set the path to the initial pattern file")
@@ -20,93 +20,76 @@ args = parser.parse_args() # to call an arg : args.i or args.o ...
 ALIVE=True
 DEAD=False
 
-
-
-
 class Board:
     def __init__(self,initial_pattern):
-        self.cells=[]
-        # Ouvrir le fichier en mode lecture ('r')
-        with open(initial_pattern, 'r') as fichier:
+        self.cells={} #the cells will be instantied in this dict
+        with open(initial_pattern, 'r') as fichier: # opening file in reading mode
             lignes = fichier.readlines()
             for i in range(len(lignes)):
                 for j in range(len(lignes[i].strip())):
                     if lignes[i].strip()[j]=='0':
-                        self.cells.append(Cell(i,j,DEAD))
+                        self.cells[(i,j)]=Cell(i,j,DEAD) #the cells are instantied in self.cells, their keys are their positions
                     if lignes[i].strip()[j]=='1':
-                        self.cells.append(Cell(i,j,ALIVE))
+                        self.cells[(i,j)]=Cell(i,j,ALIVE)
         
-    
-    def step_forward(self):
 
-        #appliquer les règles du jeu
+    def step_forward(self): #moves the board to the next step
 
-        for elt in self.cells:
+        for elt in self.cells.values(): #implement the game of life principle
+            n_b=elt.number_of_neighboors(self)
             if elt.current_state==ALIVE:
-                if elt.number_of_neighboors(self)==0 or elt.number_of_neighboors(self)==1 :
+                if n_b==0 or n_b==1 :
                     elt.next_state=DEAD
-                if elt.number_of_neighboors(self)==2 or elt.number_of_neighboors(self)==3 :
+                if n_b==2 or n_b==3 :
                     elt.next_state=ALIVE
-                if elt.number_of_neighboors(self)>3:
+                if n_b>3:
                     elt.next_state=DEAD
-                
-
+            
             if elt.current_state==DEAD:
-                if elt.number_of_neighboors(self)==3:
+                if n_b==3:
                     elt.next_state=ALIVE
             
-
-        for elt in self.cells:
+        for elt in self.cells.values():
             elt.current_state=elt.next_state
 
-        
-
-        
 
     def output_file(self):
 
-        
+        #calulate the size of the output file
+        n_raws=max([c.x_pos for c in self.cells.values()])+1
+        n_columns=max([c.y_pos for c in self.cells.values()])+1
 
-        n_raws=max([c.x_pos for c in self.cells])+1
-        n_columns=max([c.y_pos for c in self.cells])+1
-
-        
-        # Ouverture du fichier en mode écriture ('w')
+        # opening file in writing mode
         with open(args.o, 'w') as fichier:
             for i in range(n_raws):
                 for j in range(n_columns):
-                    for elt in self.cells:
-                        if elt.x_pos==i and elt.y_pos==j:
-                            if elt.current_state==ALIVE: 
-                                fichier.write("1")
-                            if elt.current_state==DEAD :      
-                                fichier.write("0")
+                    if self.cells[(i,j)].current_state==ALIVE: 
+                        fichier.write("1")
+                    if self.cells[(i,j)].current_state==DEAD:     
+                        fichier.write("0")
 
-                    
-        
-                
-                fichier.write("\n")
+                fichier.write("\n") #line break at the end of each line
 
 class Cell(Board):
     def __init__(self,x_pos,y_pos,state):
         self.x_pos=x_pos
         self.y_pos=y_pos
-        self.current_state=state #living or dead
-        self.next_state=state
+        self.current_state=state #ALIVE or DEAD
+        self.next_state=state #used to calculate a new step
 
     def number_of_neighboors(self,board):
         n=0
         circle=[(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1)]
-        for elt in circle:
-            if any(c.x_pos==self.x_pos + elt[0] and c.y_pos==self.y_pos + elt[1] and c.current_state==ALIVE for c in board.cells):
-                n=n+1
+        for elt in circle: #travels the 8 positions surrounding a cell
+            tested_position=self.x_pos + elt[0],self.y_pos + elt[1]
+            if (tested_position) in board.cells.keys() and board.cells[tested_position].current_state==ALIVE :
+                n=n+1 
         return n
     
 def game_of_life():
     board=Board(args.i)
     for k in range(int(args.m)):
         board.step_forward()
-        board.output_file()
     board.output_file()
         
 
