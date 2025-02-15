@@ -1,10 +1,16 @@
 import argparse
+import pygame
+import sys
 
+#python -m pip install pygame
+#poetry add pygame
 #poetry run game_of_life -i="my_input_file.txt" -o="my_output_file.text" -m=5 -f=0 --width=800 --height=600
 #il faut l'executer dans le dossier game_of_life contenant main.py
 
 
 #command line arguments :
+
+#-d=1 si display wanted / -d=0 if not wanted
 
 parser = argparse.ArgumentParser(description='Some description.')
 parser.add_argument('-i', help="to set the path to the initial pattern file")
@@ -85,17 +91,59 @@ class Cell(Board):
             if (tested_position) in board.cells.keys() and board.cells[tested_position].current_state==ALIVE :
                 n=n+1 
         return n
-    
-def game_of_life():
-    board=Board(args.i)
-    for k in range(int(args.m)):
-        board.step_forward()
-    board.output_file()
+
+    def draw(self, screen):
+        if self.current_state==ALIVE:
+            color=(0,0,0)
+        if self.current_state==DEAD:
+            color=(255,255,255)
+        rect = pygame.Rect(self.y_pos * 10, self.x_pos * 10, 10, 10)
+        pygame.draw.rect(screen, color, rect)
+
+
+class Display:
+
+    def __init__(self,width,height):
+        pygame.init()
+
+        self.width=width
+        self.height=height
+        self.cell_size=10
+        self.clock= pygame.time.Clock()
+        screen_size = (int(self.width),int(self.height))
+
+        self.screen = pygame.display.set_mode(screen_size)
+        self.screen.fill((0, 0, 0))
+
+    def draw_update(self,board):
+        
+        for cell in board.cells.values():
+            cell.draw(self.screen) 
+
+        pygame.display.update()
+        self.clock.tick(int(args.f))
         
 
 
+    
+def game_of_life():
+    
+    board=Board(args.i)
+    
+    if int(args.d)==1: #if display on, initiates pygame and instantiate Display
+        pygame.init()
+        display=Display(int(args.width),int(args.height))
+    
+    for k in range(int(args.m)):
+        board.step_forward() #moves the cells according to the game of life principles
 
+        if int(args.d)==1: #if display on
+            display.draw_update(board) # draws new step and refresh screen
+             #controls the fps
 
-
-
-
+    if int(args.d)==1: #if display on, stops pygame
+        pygame.quit()
+        quit()
+        
+    board.output_file() #writes the output file representing the final board a txt file
+    
