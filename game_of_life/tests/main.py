@@ -1,38 +1,19 @@
-#pour ce code dédié aux tests, les command line arguments seront passès en arguments de la fonction game_of_life
-
 import argparse
 import pygame
 import sys
 
+#this file is used to test, that is what arguments are directly given to the game_of_life fonction
+
+#import classes
 from .display import Display
 from .cells import Board
 from .cells import Cell
 
-#python -m pip install pygame
-#poetry add pygame
-#poetry run game_of_life -i="my_input_file.txt" -o="my_output_file.txt" -m=5 -f=0 --width=800 --height=600
-#il faut l'executer dans le dossier game_of_life contenant main.py
-
-
-#command line arguments :
-
-#-d=1 si display wanted
-
-# parser = argparse.ArgumentParser(description='Some description.')
-# parser.add_argument('-i', help="to set the path to the initial pattern file")
-# parser.add_argument('-o', help="to set the path to the output file, that will contain the final state of our simulation, in the same format as the input file")
-# parser.add_argument('-m', help="to set the number of steps to run, when display is off")
-# parser.add_argument('-d', default=0,help="display flag. By default no display is done with pygame (i.e.: we don’t even initialize pygame). When enabled, pygame is enabled and we display each step of the simulation")
-# parser.add_argument('-f', help="The number of frames per second to use with pygame")
-# parser.add_argument('--width', help="the initial width of the pygame screen")
-# parser.add_argument('--height', help="the initial heigth of the pygame screen")
-
-#args = parser.parse_args() # to call an arg : args.i or args.o ...
-
+#global variables
 ALIVE=True
 DEAD=False
-        
- 
+
+
 def game_of_life(input_path,output_path,m,d,f,width,height):
     
     board=Board(input_path,output_path)
@@ -55,6 +36,3 @@ def game_of_life(input_path,output_path,m,d,f,width,height):
         sys.exit()
         
     board.output_file() #writes the output file representing the final board a txt file
-
-
-    
