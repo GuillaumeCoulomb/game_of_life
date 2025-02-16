@@ -24,3 +24,9 @@ class Display:
 
         pygame.display.update()
         self._clock.tick(self._fps)
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                
