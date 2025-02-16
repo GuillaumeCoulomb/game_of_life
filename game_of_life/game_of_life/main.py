@@ -18,7 +18,7 @@ logger=logging.getLogger("foo")
 
 #command line arguments :
 
-parser = argparse.ArgumentParser(description='Some description.')
+parser = argparse.ArgumentParser(description='Conway’s Game of Life is a cellular automaton game in which a user provide an initial state that will evolve automatically.')
 parser.add_argument('-i', help="to set the path to the initial pattern file")
 parser.add_argument('-o', help="to set the path to the output file, that will contain the final state of our simulation, in the same format as the input file")
 parser.add_argument('-m', help="to set the number of steps to run, when display is off")
