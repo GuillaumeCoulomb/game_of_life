@@ -8,9 +8,9 @@ import logging
 logger=logging.getLogger("foo")
 
 class Display:
-
-    def __init__(self,width,height,fps):
-        
+    """Class that manages the display and pygame, only instantiated when -d is in command line argument"""
+    def __init__(self,width,height,fps)->None:
+        """Object initialisation"""
         try:
             pygame.init()
         except:
@@ -25,8 +25,8 @@ class Display:
         self._screen = pygame.display.set_mode(screen_size)
         self._screen.fill((128,128,128)) #the boundaries of the grid are drawn in grey
 
-    def draw_update(self,board):
-        
+    def draw_update(self,board) ->None :
+        """Draws each cell"""
         for cell in board._cells.values(): #travels the cells to draw them
             cell.draw(self._screen)
 

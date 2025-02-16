@@ -10,9 +10,9 @@ DEAD=False
 logger=logging.getLogger("foo")
 
 class Board:
-
-    def __init__(self,initial_pattern_path,output_path):
-
+    """Main class"""
+    def __init__(self,initial_pattern_path,output_path)-> None:
+        """Object initialisation"""
         self._initial_pattern_path=initial_pattern_path
         self._output_path=output_path
         self._cells={} #the cells will be instantied in this dict
@@ -35,8 +35,8 @@ class Board:
 
         logger.info("input_read")
                 
-    def step_forward(self): #moves the board to the next step
-
+    def step_forward(self) ->None:
+        """moves the board to the next step"""
         for elt in self._cells.values(): 
 
             #implement the game of life principle :
@@ -58,8 +58,8 @@ class Board:
 
         logger.info("step forward")
 
-    def output_file(self):
-
+    def output_file(self)->None:
+        """writes the outputfile according to the final situation"""
         try:
             # opening file in writing mode
             with open(self._output_path, 'w') as fichier:
@@ -76,14 +76,17 @@ class Board:
 
 
 class Cell(Board):
-    def __init__(self,x_pos,y_pos,state):
+    """Class that represent the cell"""
+    def __init__(self,x_pos,y_pos,state)->None:
+        """Object initialisation"""
         self._x_pos=x_pos
         self._y_pos=y_pos
         self._current_state=state #ALIVE or DEAD
         self._next_state=state #used to calculate a new step
         self._cell_size=10
 
-    def number_of_neighboors(self,board):
+    def number_of_neighboors(self,board)->int:
+        """returns the number of neighboors of a cell"""
         n=0
         circle=[(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1)]
         for elt in circle: #travels the 8 positions surrounding a cell
@@ -92,7 +95,8 @@ class Cell(Board):
                 n=n+1 
         return n
 
-    def draw(self, screen):
+    def draw(self, screen)->None:
+        """draws one cell"""
         if self._current_state==ALIVE:
             color=(0,0,0) #living cells drawn in black
         if self._current_state==DEAD:

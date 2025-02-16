@@ -41,7 +41,7 @@ elif args.verbose == 2:
 
 #this fonction launches the game, registered in the .tomml file
 def game_of_life():
-    
+    """Main function that starts the game"""
     board=Board(args.i,args.o)
     
     if args.d==1: #if display on, initiates pygame and instantiate Display
