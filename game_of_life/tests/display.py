@@ -30,4 +30,4 @@ class Display:
                 if event.key == pygame.K_q:
                     pygame.quit()
                     sys.exit()
-                
+

@@ -92,3 +92,4 @@ class Cell(Board):
         pygame.draw.rect(screen, color, rect)
 
 
+

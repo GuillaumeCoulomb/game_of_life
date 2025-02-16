@@ -55,4 +55,6 @@ def game_of_life(input_path,output_path,m,d,f,width,height):
         sys.exit()
         
     board.output_file() #writes the output file representing the final board a txt file
+
+
     
