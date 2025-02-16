@@ -44,9 +44,7 @@ class Board:
                 if n_b==3:
                     elt._next_state=ALIVE
 
-            #the cell reaching the edge are killed :
-            if elt._current_state==ALIVE and (elt._x_pos+1>=self._n_raws or elt._y_pos+1>=self._n_columns):
-                    elt._next_state=DEAD
+            
 
         #makes the calculated next step current    
         for elt in self._cells.values():
