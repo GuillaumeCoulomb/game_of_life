@@ -19,37 +19,46 @@ class Board:
                     if lignes[i].strip()[j]=='1':
                         self._cells[(i,j)]=Cell(i,j,ALIVE)
         
+        #grid size
+
+        self._n_raws=max([c._x_pos for c in self._cells.values()])+1
+        self._n_columns=max([c._y_pos for c in self._cells.values()])+1
+                
 
     def step_forward(self): #moves the board to the next step
 
-        for elt in self._cells.values(): #implement the game of life principle
+        for elt in self._cells.values(): 
+            #implement the game of life principle :
             n_b=elt.number_of_neighboors(self)
-            if elt._current_state==ALIVE:
+            if elt._current_state==ALIVE:              
+
+                
                 if n_b==0 or n_b==1 :
                     elt._next_state=DEAD
                 if n_b==2 or n_b==3 :
                     elt._next_state=ALIVE
                 if n_b>3:
                     elt._next_state=DEAD
-            
+
             if elt._current_state==DEAD:
                 if n_b==3:
                     elt._next_state=ALIVE
-            
+
+            #the cell reaching the edge are killed :
+            if elt._current_state==ALIVE and (elt._x_pos+1>=self._n_raws or elt._y_pos+1>=self._n_columns):
+                    elt._next_state=DEAD
+
+        #makes the calculated next step current    
         for elt in self._cells.values():
             elt._current_state=elt._next_state
 
 
     def output_file(self):
 
-        #calulate the size of the output file
-        n_raws=max([c._x_pos for c in self._cells.values()])+1
-        n_columns=max([c._y_pos for c in self._cells.values()])+1
-
         # opening file in writing mode
         with open(self._output_path, 'w') as fichier:
-            for i in range(n_raws):
-                for j in range(n_columns):
+            for i in range(self._n_raws):
+                for j in range(self._n_columns):
                     if self._cells[(i,j)]._current_state==ALIVE: 
                         fichier.write("1")
                     if self._cells[(i,j)]._current_state==DEAD:     
