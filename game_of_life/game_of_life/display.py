@@ -1,11 +1,18 @@
 import argparse
 import pygame
 import sys
+import logging
+
+logger=logging.getLogger("foo")
 
 class Display:
 
     def __init__(self,width,height,fps):
-        pygame.init()
+        
+        try:
+            pygame.init()
+        except:
+            logger.error("the program failed to initiate pygame")
 
         self._width=width
         self._height=height
@@ -22,12 +29,18 @@ class Display:
         for cell in board._cells.values():
             cell.draw(self._screen) 
 
-        pygame.display.update()
+        try:
+            pygame.display.update()
+        except:
+            logger.warning("the program failed to update the display")
+
         self._clock.tick(self._fps)
 
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
-                    pygame.quit()
-                    sys.exit()
-                
+        try:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        sys.exit()
+        except:
+            logger.error("the program failed to quit")          

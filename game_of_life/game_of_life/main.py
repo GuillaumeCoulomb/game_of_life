@@ -1,6 +1,7 @@
 import argparse
 import pygame
 import sys
+import logging
 
 from .display import Display
 from .cells import Board
@@ -27,8 +28,11 @@ parser.add_argument('--height', help="the initial heigth of the pygame screen")
 
 args = parser.parse_args() # to call an arg : args.i or args.o ...
 
+
 ALIVE=True
 DEAD=False
+
+logger=logging.getLogger("foo")
         
  
 def game_of_life():
@@ -37,6 +41,7 @@ def game_of_life():
     
     if int(args.d)==1: #if display on, initiates pygame and instantiate Display
         pygame.init()
+        logger.info("pygame initialised")
         display=Display(int(args.width),int(args.height),int(args.f))
     
     for k in range(int(args.m)):
@@ -50,7 +55,9 @@ def game_of_life():
     if int(args.d)==1: #if display on, stops pygame
         pygame.quit()
         quit()
+        logger.info("pygame quit")
         sys.exit()
         
     board.output_file() #writes the output file representing the final board a txt file
+    logger.info("output file written")
     
